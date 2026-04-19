@@ -1,119 +1,160 @@
-import React from 'react';
-import { Layout, Home, User, Settings, LogOut, Bell, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ClipboardCheck, Search, Settings, User, Phone, Package, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+import DashboardHeader from '../components/DashboardHeader';
+import CustomDropdown from '../components/CustomDropdown';
 
 const UserDashboard = () => {
   const navigate = useNavigate();
+  const [submitted, setSubmitted] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
+  const [formData, setFormData] = useState({
+    customerName: '',
+    customerPhone: '',
+    tileType: 'Ceramic Tiles',
+    status: 'Interested / Follow-up',
+    remarks: ''
+  });
+
+  const toggleTheme = () => {
+    const newDark = !isDark;
+    setIsDark(newDark);
+    document.documentElement.classList.toggle('dark');
+  };
 
   const handleLogout = () => {
     navigate('/');
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setFormData({ customerName: '', customerPhone: '', tileType: 'Ceramic Tiles', status: 'Interested / Follow-up', remarks: '' });
+    }, 3000);
+  };
+
+  const navItems = [
+    { icon: ClipboardCheck, label: "Daily Task", active: true, onClick: () => {} },
+    { icon: Search, label: "Search Data", active: false, onClick: () => {} },
+    { icon: Settings, label: "Settings", active: false, onClick: () => {} }
+  ];
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex text-zinc-900 dark:text-white transition-colors duration-500 font-sans">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white dark:bg-black/40 border-r border-zinc-200 dark:border-white/5 flex flex-col backdrop-blur-xl">
-        <div className="p-6 border-b border-zinc-200 dark:border-white/5">
-          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-500">
-            Fiora User
-          </h1>
-        </div>
-        
-        <nav className="flex-1 p-4 space-y-2">
-          <button className="w-full flex items-center space-x-3 bg-blue-50 dark:bg-white/10 text-blue-600 dark:text-white px-4 py-3 rounded-xl transition-all">
-            <Home className="w-5 h-5" />
-            <span className="font-medium">Dashboard</span>
-          </button>
-          <button className="w-full flex items-center space-x-3 hover:bg-zinc-100 dark:hover:bg-white/5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white px-4 py-3 rounded-xl transition-all">
-            <User className="w-5 h-5" />
-            <span className="font-medium">Profile</span>
-          </button>
-          <button className="w-full flex items-center space-x-3 hover:bg-zinc-100 dark:hover:bg-white/5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white px-4 py-3 rounded-xl transition-all">
-            <Settings className="w-5 h-5" />
-            <span className="font-medium">Settings</span>
-          </button>
-        </nav>
+    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex text-zinc-900 dark:text-white transition-colors duration-500 font-sans overflow-hidden">
+      
+      <Sidebar 
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
+        logo={ClipboardCheck}
+        logoText="Fiora"
+        navItems={navItems}
+        onLogout={handleLogout}
+        theme="blue"
+      />
 
-        <div className="p-4 border-t border-zinc-200 dark:border-white/5">
-          <button onClick={handleLogout} className="w-full flex items-center justify-center space-x-2 text-zinc-500 hover:text-rose-500 transition-colors py-2 font-medium">
-            <LogOut className="w-5 h-5" />
-            <span>Logout</span>
-          </button>
-        </div>
-      </aside>
+      <div className="flex-1 flex flex-col min-w-0">
+        <DashboardHeader 
+          title="Daily Work Submission"
+          user={{ name: "User Agent", email: "user@fiora.com" }}
+          onLogout={handleLogout}
+          isDark={isDark}
+          toggleTheme={toggleTheme}
+          theme="blue"
+        />
 
-      {/* Main Content */}
-      <main className="flex-1 p-8 relative overflow-y-auto">
-        {/* Decorative background */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
-        
-        <header className="flex justify-between items-center mb-10">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">Welcome back, User!</h2>
-            <p className="text-zinc-500 dark:text-zinc-400 mt-1">Here is what's happening today.</p>
-          </div>
+        <main className="flex-1 p-6 lg:p-10 relative overflow-y-auto bg-slate-50 dark:bg-zinc-950 transition-all duration-300 custom-scrollbar">
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
           
-          <div className="flex items-center space-x-4">
-            <button className="p-2.5 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl hover:bg-zinc-50 dark:hover:bg-white/10 transition-colors relative">
-              <Bell className="w-5 h-5 text-zinc-500" />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-zinc-950"></span>
-            </button>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
-              <input 
-                type="text" 
-                placeholder="Search..." 
-                className="pl-10 pr-4 py-2.5 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl focus:outline-none focus:border-blue-500 transition-colors text-sm w-64 shadow-sm"
-              />
-            </div>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
-            <h3 className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mb-2">Total Activity</h3>
-            <p className="text-3xl font-bold">1,284</p>
-            <div className="mt-4 flex items-center text-emerald-500 text-sm font-medium">
-              <span>+12.5%</span>
-              <span className="ml-1 text-zinc-400 font-normal">from last week</span>
-            </div>
-          </div>
-          <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
-            <h3 className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mb-2">Completion Rate</h3>
-            <p className="text-3xl font-bold">94.2%</p>
-            <div className="mt-4 flex items-center text-blue-500 text-sm font-medium">
-              <span>Stable</span>
-              <span className="ml-1 text-zinc-400 font-normal">performance</span>
-            </div>
-          </div>
-          <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
-            <h3 className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mb-2">Upcoming Tasks</h3>
-            <p className="text-3xl font-bold">8</p>
-            <div className="mt-4 flex items-center text-amber-500 text-sm font-medium">
-              <span>Due soon</span>
-              <span className="ml-1 text-zinc-400 font-normal">action required</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl p-8 shadow-sm backdrop-blur-sm">
-          <h3 className="text-xl font-bold mb-6">Recent Activity</h3>
-          <div className="space-y-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-start space-x-4">
-                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                  <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <div className="max-w-2xl mx-auto">
+            {submitted ? (
+              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-12 text-center animate-in zoom-in duration-500 shadow-xl backdrop-blur-md">
+                <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                  <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                 </div>
-                <div className="flex-1 border-b border-zinc-100 dark:border-white/5 pb-6">
-                  <p className="font-semibold">Activity {i}</p>
-                  <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-1">You updated your profile information and saved changes to your account settings.</p>
-                  <p className="text-xs text-zinc-400 mt-2">2 hours ago</p>
-                </div>
+                <h3 className="text-2xl font-black text-emerald-500 mb-3">Submission Successful!</h3>
+                <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium leading-relaxed">Recorded successfully.</p>
               </div>
-            ))}
+            ) : (
+              <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-[2rem] p-8 shadow-xl backdrop-blur-sm relative overflow-hidden">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 flex items-center px-0.5 uppercase tracking-wider">
+                        <User className="w-4 h-4 mr-2 text-blue-500" /> Customer Name
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.customerName}
+                        onChange={(e) => setFormData({...formData, customerName: e.target.value})}
+                        placeholder="Rahul Sharma"
+                        className="w-full bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white text-sm font-semibold shadow-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 flex items-center px-0.5 uppercase tracking-wider">
+                        <Phone className="w-4 h-4 mr-2 text-blue-500" /> Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.customerPhone}
+                        onChange={(e) => setFormData({...formData, customerPhone: e.target.value})}
+                        placeholder="+91 98765 43210"
+                        className="w-full bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white text-sm font-semibold shadow-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <CustomDropdown
+                      label="Tile Type"
+                      icon={Package}
+                      options={['Ceramic Tiles', 'Porcelain Tiles', 'Vitrified Tiles', 'Marble Finish', 'Granite Tiles']}
+                      value={formData.tileType}
+                      onChange={(val) => setFormData({...formData, tileType: val})}
+                      theme="blue"
+                    />
+                    <CustomDropdown
+                      label="Status"
+                      icon={ClipboardCheck}
+                      options={['Interested / Follow-up', 'Not Interested', 'Order Placed', 'Sample Sent']}
+                      value={formData.status}
+                      onChange={(val) => setFormData({...formData, status: val})}
+                      theme="blue"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 flex items-center px-0.5 uppercase tracking-wider">
+                      <MessageSquare className="w-4 h-4 mr-2 text-blue-500" /> Remarks
+                    </label>
+                    <textarea
+                      rows="4"
+                      value={formData.remarks}
+                      onChange={(e) => setFormData({...formData, remarks: e.target.value})}
+                      placeholder="Describe the interaction..."
+                      className="w-full bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none dark:text-white text-sm font-semibold shadow-sm"
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full flex items-center justify-center py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:scale-[1.01] active:scale-[0.99] mt-6"
+                  >
+                    <Send className="w-5 h-5 mr-2" />
+                    Submit Daily Task
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };

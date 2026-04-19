@@ -1,226 +1,241 @@
 import React, { useState } from 'react';
-import { Users, UserPlus, Settings, LogOut, Search, ChevronDown, Check } from 'lucide-react';
+import { Users, UserPlus, ClipboardList, Search, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+import DashboardHeader from '../components/DashboardHeader';
+import CustomDropdown from '../components/CustomDropdown';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('tasks');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
+  
   const [users, setUsers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'User', status: 'Active' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Admin', status: 'Active' },
+    { id: 1, name: 'John Sales', email: 'john@fiora.com', role: 'User', status: 'Active' },
+    { id: 2, name: 'Jane Admin', email: 'jane@fiora.com', role: 'Admin', status: 'Active' },
+  ]);
+
+  const [workLogs, setWorkLogs] = useState([
+    { id: 1, agent: 'John Sales', customer: 'Aryan Tiles Co.', phone: '9876543210', tileType: 'Porcelain', status: 'Order Placed', time: '10:30 AM' },
+    { id: 2, agent: 'John Sales', customer: 'Modern Builders', phone: '9123456789', tileType: 'Vitrified', status: 'Interested', time: '11:45 AM' },
+    { id: 3, agent: 'John Sales', customer: 'S.K. Enterprises', phone: '9988776655', tileType: 'Ceramic', status: 'Follow-up', time: '02:15 PM' },
   ]);
 
   const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: 'User' });
-  const [isRoleOpen, setIsRoleOpen] = useState(false);
+
+  const toggleTheme = () => {
+    const newDark = !isDark;
+    setIsDark(newDark);
+    document.documentElement.classList.toggle('dark');
+  };
 
   const handleCreateUser = (e) => {
     e.preventDefault();
-    const created = {
-      id: users.length + 1,
-      ...newUser,
-      status: 'Active'
-    };
+    const created = { id: users.length + 1, ...newUser, status: 'Active' };
     setUsers([...users, created]);
     setNewUser({ name: '', email: '', password: '', role: 'User' });
-    // In a real app, you would make an API call to the backend here
   };
 
   const handleLogout = () => {
     navigate('/admin');
   };
 
+  const navItems = [
+    { icon: ClipboardList, label: "Work Logs", active: activeTab === 'tasks', onClick: () => setActiveTab('tasks') },
+    { icon: Users, label: "Users", active: activeTab === 'users', onClick: () => setActiveTab('users') },
+    { icon: Settings, label: "Settings", active: activeTab === 'settings', onClick: () => setActiveTab('settings') }
+  ];
+
   return (
-    <div className="min-h-screen bg-zinc-950 flex text-white font-sans">
-      {/* Sidebar */}
-      <aside className="w-64 bg-black/40 border-r border-white/5 flex flex-col backdrop-blur-xl">
-        <div className="p-6 border-b border-white/5">
-          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-rose-400 to-orange-500">
-            Admin Portal
-          </h1>
-        </div>
-        
-        <nav className="flex-1 p-4 space-y-2">
-          <button className="w-full flex items-center space-x-3 bg-white/10 text-white px-4 py-3 rounded-xl transition-all">
-            <UserPlus className="w-5 h-5 text-rose-400" />
-            <span className="font-medium">User Management</span>
-          </button>
-          <button className="w-full flex items-center space-x-3 hover:bg-white/5 text-zinc-400 hover:text-white px-4 py-3 rounded-xl transition-all">
-            <Settings className="w-5 h-5" />
-            <span className="font-medium">Settings</span>
-          </button>
-        </nav>
+    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex text-zinc-900 dark:text-white transition-colors duration-500 font-sans overflow-hidden">
+      
+      <Sidebar 
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
+        logo={ClipboardList}
+        logoText="Fiora Admin"
+        navItems={navItems}
+        onLogout={handleLogout}
+        theme="rose"
+      />
 
-        <div className="p-4 border-t border-white/5">
-          <button onClick={handleLogout} className="w-full flex items-center justify-center space-x-2 text-zinc-400 hover:text-rose-400 transition-colors py-2">
-            <LogOut className="w-5 h-5" />
-            <span>Logout</span>
-          </button>
-        </div>
-      </aside>
+      <div className="flex-1 flex flex-col min-w-0">
+        <DashboardHeader 
+          title={activeTab === 'tasks' ? 'Work Logs Management' : 'User Accounts'}
+          user={{ name: "Admin User", email: "admin@fiora.com" }}
+          onLogout={handleLogout}
+          isDark={isDark}
+          toggleTheme={toggleTheme}
+          theme="rose"
+        />
 
-      {/* Main Content */}
-      <main className="flex-1 p-8 relative overflow-y-auto">
-        {/* Decorative background */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-rose-500/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
-        
-        <header className="flex justify-between items-center mb-10">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">User Management</h2>
-            <p className="text-zinc-400 mt-1">Create and manage user accounts</p>
-          </div>
+        <main className="flex-1 p-6 lg:p-10 relative overflow-y-auto bg-slate-50 dark:bg-zinc-950 transition-all duration-300 custom-scrollbar">
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-rose-500/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
           
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
-            <input 
-              type="text" 
-              placeholder="Search users..." 
-              className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-rose-500 transition-colors text-sm w-64"
-            />
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Create User Form */}
-          <div className="lg:col-span-1">
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="p-2 bg-rose-500/20 rounded-lg">
-                  <UserPlus className="w-5 h-5 text-rose-400" />
+          {activeTab === 'tasks' ? (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl p-6 shadow-sm backdrop-blur-sm">
+                  <h3 className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-2">Visits Today</h3>
+                  <p className="text-3xl font-black">42</p>
                 </div>
-                <h3 className="text-xl font-semibold">Create New User</h3>
+                <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl p-6 shadow-sm backdrop-blur-sm">
+                  <h3 className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-2">New Orders</h3>
+                  <p className="text-3xl font-black text-emerald-500">12</p>
+                </div>
+                <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl p-6 shadow-sm backdrop-blur-sm">
+                  <h3 className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-2">Pending</h3>
+                  <p className="text-3xl font-black text-rose-500">08</p>
+                </div>
               </div>
 
-              <form onSubmit={handleCreateUser} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1">Full Name</label>
-                  <input
-                    type="text"
-                    value={newUser.name}
-                    onChange={(e) => setNewUser({...newUser, name: e.target.value})}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500 transition-colors"
-                    required
-                  />
+              <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-[2rem] overflow-hidden shadow-xl backdrop-blur-sm">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-zinc-50 dark:bg-white/5 text-zinc-500 dark:text-zinc-400 text-xs font-bold uppercase tracking-wider">
+                        <th className="px-6 py-4">Agent</th>
+                        <th className="px-6 py-4">Customer</th>
+                        <th className="px-6 py-4">Product</th>
+                        <th className="px-6 py-4">Status</th>
+                        <th className="px-6 py-4">Time</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-zinc-100 dark:divide-white/5 text-sm">
+                      {workLogs.map((log) => (
+                        <tr key={log.id} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 rounded-full bg-rose-500/10 dark:bg-rose-500/20 flex items-center justify-center text-xs font-black text-rose-600 dark:text-rose-400">
+                                {log.agent.charAt(0)}
+                              </div>
+                              <span className="font-bold">{log.agent}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-bold text-zinc-900 dark:text-white">{log.customer}</div>
+                            <div className="text-[10px] text-zinc-500">{log.phone}</div>
+                          </td>
+                          <td className="px-6 py-4 text-zinc-600 dark:text-zinc-300 font-medium">{log.tileType}</td>
+                          <td className="px-6 py-4">
+                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                              log.status === 'Order Placed' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 
+                              log.status === 'Interested' ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400' : 'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400'
+                            }`}>
+                              {log.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-zinc-400 font-bold">{log.time}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1">Email Address</label>
-                  <input
-                    type="email"
-                    value={newUser.email}
-                    onChange={(e) => setNewUser({...newUser, email: e.target.value})}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500 transition-colors"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1">Password</label>
-                  <input
-                    type="password"
-                    value={newUser.password}
-                    onChange={(e) => setNewUser({...newUser, password: e.target.value})}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500 transition-colors"
-                    required
-                  />
-                </div>
-                <div className="relative">
-                  <label className="block text-sm font-medium text-zinc-400 mb-1">Role</label>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setIsRoleOpen(!isRoleOpen)}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-left focus:outline-none focus:border-rose-500 transition-colors text-white flex items-center justify-between shadow-sm"
-                    >
-                      <span className="font-medium">{newUser.role}</span>
-                      <ChevronDown className={`w-4 h-4 text-zinc-400 transition-transform duration-200 ${isRoleOpen ? 'rotate-180' : ''}`} />
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="lg:col-span-1">
+                <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-[2rem] p-6 shadow-xl backdrop-blur-sm">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <div className="p-2 bg-rose-500/10 dark:bg-rose-500/20 rounded-xl">
+                      <UserPlus className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+                    </div>
+                    <h3 className="text-lg font-black">Add User</h3>
+                  </div>
+
+                  <form onSubmit={handleCreateUser} className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 px-0.5 uppercase tracking-wider">Full Name</label>
+                      <input
+                        type="text"
+                        value={newUser.name}
+                        onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                        className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500 transition-colors dark:text-white text-sm font-semibold"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 px-0.5 uppercase tracking-wider">Email</label>
+                      <input
+                        type="email"
+                        value={newUser.email}
+                        onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                        className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500 transition-colors dark:text-white text-sm font-semibold"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 px-0.5 uppercase tracking-wider">Password</label>
+                      <input
+                        type="password"
+                        value={newUser.password}
+                        onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+                        className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500 transition-colors dark:text-white text-sm font-semibold"
+                        required
+                      />
+                    </div>
+                    <CustomDropdown
+                      label="Role"
+                      options={['User', 'Admin']}
+                      value={newUser.role}
+                      onChange={(val) => setNewUser({...newUser, role: val})}
+                      theme="rose"
+                    />
+                    <button type="submit" className="w-full mt-4 bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white font-bold text-sm py-3 rounded-xl transition-all duration-300 shadow-lg shadow-rose-500/20 transform hover:scale-[1.01] active:scale-[0.99]">
+                      Create Account
                     </button>
-                    
-                    {isRoleOpen && (
-                      <div className="absolute z-50 w-full mt-2 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl ring-1 ring-black ring-opacity-5 animate-in fade-in slide-in-from-top-2 duration-200">
-                        {['User', 'Admin'].map((role) => (
-                          <button
-                            key={role}
-                            type="button"
-                            onClick={() => {
-                              setNewUser({...newUser, role});
-                              setIsRoleOpen(false);
-                            }}
-                            className={`w-full text-left px-4 py-3 text-sm transition-all flex items-center justify-between ${
-                              newUser.role === role 
-                                ? 'text-rose-400 bg-rose-500/10 font-semibold' 
-                                : 'text-zinc-300 hover:bg-white/10 hover:text-white'
-                            }`}
-                          >
-                            {role}
-                            {newUser.role === role && <Check className="w-4 h-4" />}
-                          </button>
+                  </form>
+                </div>
+              </div>
+
+              <div className="lg:col-span-2">
+                <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-[2rem] overflow-hidden shadow-xl backdrop-blur-sm">
+                  <div className="p-6 border-b border-zinc-100 dark:border-white/5 flex items-center space-x-3">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-xl">
+                      <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <h3 className="text-lg font-black">Active Team</h3>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-zinc-50 dark:bg-white/5 text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest">
+                          <th className="px-6 py-4">Name</th>
+                          <th className="px-6 py-4">Role</th>
+                          <th className="px-6 py-4">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-100 dark:divide-white/5 text-sm">
+                        {users.map((user) => (
+                          <tr key={user.id} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors">
+                            <td className="px-6 py-4">
+                              <div className="font-bold text-zinc-900 dark:text-white">{user.name}</div>
+                              <div className="text-[10px] text-zinc-500">{user.email}</div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${user.role === 'Admin' ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400' : 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400'}`}>
+                                {user.role}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center space-x-2">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                                <span className="text-zinc-600 dark:text-zinc-300 font-bold text-xs">{user.status}</span>
+                              </div>
+                            </td>
+                          </tr>
                         ))}
-                      </div>
-                    )}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-                
-                <button
-                  type="submit"
-                  className="w-full mt-2 bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white font-medium py-3 rounded-xl transition-all duration-300 shadow-lg shadow-rose-500/20"
-                >
-                  Create User
-                </button>
-              </form>
-            </div>
-          </div>
-
-          {/* User List Table */}
-          <div className="lg:col-span-2">
-            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm">
-              <div className="p-6 border-b border-white/5 flex items-center space-x-3">
-                <div className="p-2 bg-blue-500/20 rounded-lg">
-                  <Users className="w-5 h-5 text-blue-400" />
-                </div>
-                <h3 className="text-xl font-semibold">Active Users</h3>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-white/5 text-zinc-400 text-sm">
-                      <th className="px-6 py-4 font-medium">Name</th>
-                      <th className="px-6 py-4 font-medium">Email</th>
-                      <th className="px-6 py-4 font-medium">Role</th>
-                      <th className="px-6 py-4 font-medium">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5 text-sm">
-                    {users.map((user) => (
-                      <tr key={user.id} className="hover:bg-white/5 transition-colors">
-                        <td className="px-6 py-4 font-medium text-white">{user.name}</td>
-                        <td className="px-6 py-4 text-zinc-400">{user.email}</td>
-                        <td className="px-6 py-4">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                            user.role === 'Admin' ? 'bg-rose-500/20 text-rose-400' : 'bg-blue-500/20 text-blue-400'
-                          }`}>
-                            {user.role}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                            <span className="text-zinc-300">{user.status}</span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                    {users.length === 0 && (
-                      <tr>
-                        <td colSpan="4" className="px-6 py-8 text-center text-zinc-500">
-                          No users found
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
               </div>
             </div>
-          </div>
-        </div>
-      </main>
+          )}
+        </main>
+      </div>
     </div>
   );
 };
