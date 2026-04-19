@@ -7,10 +7,10 @@ import CustomDropdown from '../components/CustomDropdown';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('tasks');
+  const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('adminActiveTab') || 'tasks');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
-  
+
   const [users, setUsers] = useState([
     { id: 1, name: 'John Sales', email: 'john@fiora.com', role: 'User', status: 'Active' },
     { id: 2, name: 'Jane Admin', email: 'jane@fiora.com', role: 'Admin', status: 'Active' },
@@ -41,16 +41,21 @@ const AdminDashboard = () => {
     navigate('/admin');
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    sessionStorage.setItem('adminActiveTab', tab);
+  };
+
   const navItems = [
-    { icon: ClipboardList, label: "Work Logs", active: activeTab === 'tasks', onClick: () => setActiveTab('tasks') },
-    { icon: Users, label: "Users", active: activeTab === 'users', onClick: () => setActiveTab('users') },
-    { icon: Settings, label: "Settings", active: activeTab === 'settings', onClick: () => setActiveTab('settings') }
+    { icon: ClipboardList, label: "Work Logs", active: activeTab === 'tasks', onClick: () => handleTabChange('tasks') },
+    { icon: Users, label: "Users", active: activeTab === 'users', onClick: () => handleTabChange('users') },
+    { icon: Settings, label: "Settings", active: activeTab === 'settings', onClick: () => handleTabChange('settings') }
   ];
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex text-zinc-900 dark:text-white transition-colors duration-500 font-sans overflow-hidden">
-      
-      <Sidebar 
+
+      <Sidebar
         isCollapsed={isSidebarCollapsed}
         setIsCollapsed={setIsSidebarCollapsed}
         logo={ClipboardList}
@@ -61,7 +66,7 @@ const AdminDashboard = () => {
       />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <DashboardHeader 
+        <DashboardHeader
           title={activeTab === 'tasks' ? 'Work Logs Management' : 'User Accounts'}
           user={{ name: "Admin User", email: "admin@fiora.com" }}
           onLogout={handleLogout}
@@ -72,7 +77,7 @@ const AdminDashboard = () => {
 
         <main className="flex-1 p-6 lg:p-10 relative overflow-y-auto bg-slate-50 dark:bg-zinc-950 transition-all duration-300 custom-scrollbar">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-rose-500/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
-          
+
           {activeTab === 'tasks' ? (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -94,7 +99,7 @@ const AdminDashboard = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-zinc-50 dark:bg-white/5 text-zinc-500 dark:text-zinc-400 text-xs font-bold uppercase tracking-wider">
+                      <tr className="bg-zinc-50 dark:bg-white/5 text-zinc-500 dark:text-zinc-400 text-md font-bold uppercase tracking-wider">
                         <th className="px-6 py-4">Agent</th>
                         <th className="px-6 py-4">Customer</th>
                         <th className="px-6 py-4">Product</th>
@@ -107,7 +112,7 @@ const AdminDashboard = () => {
                         <tr key={log.id} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors">
                           <td className="px-6 py-4">
                             <div className="flex items-center space-x-3">
-                              <div className="w-8 h-8 rounded-full bg-rose-500/10 dark:bg-rose-500/20 flex items-center justify-center text-xs font-black text-rose-600 dark:text-rose-400">
+                              <div className="w-8 h-8 rounded-full bg-rose-500/10 dark:bg-rose-500/20 flex items-center justify-center text-md font-black text-rose-600 dark:text-rose-400">
                                 {log.agent.charAt(0)}
                               </div>
                               <span className="font-bold">{log.agent}</span>
@@ -119,10 +124,9 @@ const AdminDashboard = () => {
                           </td>
                           <td className="px-6 py-4 text-zinc-600 dark:text-zinc-300 font-medium">{log.tileType}</td>
                           <td className="px-6 py-4">
-                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                              log.status === 'Order Placed' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 
-                              log.status === 'Interested' ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400' : 'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400'
-                            }`}>
+                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${log.status === 'Order Placed' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' :
+                                log.status === 'Interested' ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400' : 'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400'
+                              }`}>
                               {log.status}
                             </span>
                           </td>
@@ -147,31 +151,31 @@ const AdminDashboard = () => {
 
                   <form onSubmit={handleCreateUser} className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 px-0.5 uppercase tracking-wider">Full Name</label>
+                      <label className="block text-md font-bold text-zinc-500 dark:text-zinc-400 px-0.5 uppercase tracking-wider">Full Name</label>
                       <input
                         type="text"
                         value={newUser.name}
-                        onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                        onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
                         className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500 transition-colors dark:text-white text-sm font-semibold"
                         required
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 px-0.5 uppercase tracking-wider">Email</label>
+                      <label className="block text-md font-bold text-zinc-500 dark:text-zinc-400 px-0.5 uppercase tracking-wider">Email</label>
                       <input
                         type="email"
                         value={newUser.email}
-                        onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                        onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
                         className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500 transition-colors dark:text-white text-sm font-semibold"
                         required
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 px-0.5 uppercase tracking-wider">Password</label>
+                      <label className="block text-md font-bold text-zinc-500 dark:text-zinc-400 px-0.5 uppercase tracking-wider">Password</label>
                       <input
                         type="password"
                         value={newUser.password}
-                        onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+                        onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                         className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500 transition-colors dark:text-white text-sm font-semibold"
                         required
                       />
@@ -180,7 +184,7 @@ const AdminDashboard = () => {
                       label="Role"
                       options={['User', 'Admin']}
                       value={newUser.role}
-                      onChange={(val) => setNewUser({...newUser, role: val})}
+                      onChange={(val) => setNewUser({ ...newUser, role: val })}
                       theme="rose"
                     />
                     <button type="submit" className="w-full mt-4 bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white font-bold text-sm py-3 rounded-xl transition-all duration-300 shadow-lg shadow-rose-500/20 transform hover:scale-[1.01] active:scale-[0.99]">
@@ -222,7 +226,7 @@ const AdminDashboard = () => {
                             <td className="px-6 py-4">
                               <div className="flex items-center space-x-2">
                                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                                <span className="text-zinc-600 dark:text-zinc-300 font-bold text-xs">{user.status}</span>
+                                <span className="text-zinc-600 dark:text-zinc-300 font-bold text-md">{user.status}</span>
                               </div>
                             </td>
                           </tr>

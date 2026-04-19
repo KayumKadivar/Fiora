@@ -7,6 +7,7 @@ import CustomDropdown from '../components/CustomDropdown';
 
 const UserDashboard = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('userActiveTab') || 'task');
   const [submitted, setSubmitted] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
@@ -37,16 +38,21 @@ const UserDashboard = () => {
     }, 3000);
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    sessionStorage.setItem('userActiveTab', tab);
+  };
+
   const navItems = [
-    { icon: ClipboardCheck, label: "Daily Task", active: true, onClick: () => {} },
-    { icon: Search, label: "Search Data", active: false, onClick: () => {} },
-    { icon: Settings, label: "Settings", active: false, onClick: () => {} }
+    { icon: ClipboardCheck, label: "Daily Task", active: activeTab === 'task', onClick: () => handleTabChange('task') },
+    { icon: Search, label: "Search Data", active: activeTab === 'search', onClick: () => handleTabChange('search') },
+    { icon: Settings, label: "Settings", active: activeTab === 'settings', onClick: () => handleTabChange('settings') }
   ];
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex text-zinc-900 dark:text-white transition-colors duration-500 font-sans overflow-hidden">
-      
-      <Sidebar 
+
+      <Sidebar
         isCollapsed={isSidebarCollapsed}
         setIsCollapsed={setIsSidebarCollapsed}
         logo={ClipboardCheck}
@@ -57,8 +63,8 @@ const UserDashboard = () => {
       />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <DashboardHeader 
-          title="Daily Work Submission"
+        <DashboardHeader
+          title={activeTab === 'task' ? 'Daily Work Submission' : activeTab === 'search' ? 'Search Data' : 'Settings'}
           user={{ name: "User Agent", email: "user@fiora.com" }}
           onLogout={handleLogout}
           isDark={isDark}
@@ -68,9 +74,10 @@ const UserDashboard = () => {
 
         <main className="flex-1 p-6 lg:p-10 relative overflow-y-auto bg-slate-50 dark:bg-zinc-950 transition-all duration-300 custom-scrollbar">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
-          
-          <div className="max-w-2xl mx-auto">
-            {submitted ? (
+
+          {activeTab === 'task' ? (
+            <div className="max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {submitted ? (
               <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-12 text-center animate-in zoom-in duration-500 shadow-xl backdrop-blur-md">
                 <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
                   <CheckCircle2 className="w-10 h-10 text-emerald-500" />
@@ -83,27 +90,27 @@ const UserDashboard = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 flex items-center px-0.5 uppercase tracking-wider">
+                      <label className="text-md font-bold text-zinc-500 dark:text-zinc-400 flex items-center px-0.5 uppercase tracking-wider">
                         <User className="w-4 h-4 mr-2 text-blue-500" /> Customer Name
                       </label>
                       <input
                         type="text"
                         required
                         value={formData.customerName}
-                        onChange={(e) => setFormData({...formData, customerName: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
                         placeholder="Rahul Sharma"
                         className="w-full bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white text-sm font-semibold shadow-sm"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 flex items-center px-0.5 uppercase tracking-wider">
+                      <label className="text-md font-bold text-zinc-500 dark:text-zinc-400 flex items-center px-0.5 uppercase tracking-wider">
                         <Phone className="w-4 h-4 mr-2 text-blue-500" /> Phone Number
                       </label>
                       <input
                         type="tel"
                         required
                         value={formData.customerPhone}
-                        onChange={(e) => setFormData({...formData, customerPhone: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
                         placeholder="+91 98765 43210"
                         className="w-full bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white text-sm font-semibold shadow-sm"
                       />
@@ -116,7 +123,7 @@ const UserDashboard = () => {
                       icon={Package}
                       options={['Ceramic Tiles', 'Porcelain Tiles', 'Vitrified Tiles', 'Marble Finish', 'Granite Tiles']}
                       value={formData.tileType}
-                      onChange={(val) => setFormData({...formData, tileType: val})}
+                      onChange={(val) => setFormData({ ...formData, tileType: val })}
                       theme="blue"
                     />
                     <CustomDropdown
@@ -124,19 +131,19 @@ const UserDashboard = () => {
                       icon={ClipboardCheck}
                       options={['Interested / Follow-up', 'Not Interested', 'Order Placed', 'Sample Sent']}
                       value={formData.status}
-                      onChange={(val) => setFormData({...formData, status: val})}
+                      onChange={(val) => setFormData({ ...formData, status: val })}
                       theme="blue"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 flex items-center px-0.5 uppercase tracking-wider">
+                    <label className="text-md font-bold text-zinc-500 dark:text-zinc-400 flex items-center px-0.5 uppercase tracking-wider">
                       <MessageSquare className="w-4 h-4 mr-2 text-blue-500" /> Remarks
                     </label>
                     <textarea
                       rows="4"
                       value={formData.remarks}
-                      onChange={(e) => setFormData({...formData, remarks: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
                       placeholder="Describe the interaction..."
                       className="w-full bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none dark:text-white text-sm font-semibold shadow-sm"
                     ></textarea>
@@ -152,7 +159,14 @@ const UserDashboard = () => {
                 </form>
               </div>
             )}
-          </div>
+            </div>
+          ) : (
+            <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-[2rem] p-12 shadow-xl backdrop-blur-sm text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <p className="text-zinc-500 dark:text-zinc-400 font-bold text-lg">
+                {activeTab === 'search' ? 'Search functionality coming soon.' : 'Settings configuration coming soon.'}
+              </p>
+            </div>
+          )}
         </main>
       </div>
     </div>

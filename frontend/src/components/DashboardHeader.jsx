@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bell, User, Settings, LogOut, ChevronDown, Sun, Moon } from 'lucide-react';
 
-const DashboardHeader = ({ 
-  title, 
-  user, 
-  onLogout, 
-  isDark, 
+const DashboardHeader = ({
+  title,
+  user,
+  onLogout,
+  isDark,
   toggleTheme,
   theme = 'blue'
 }) => {
@@ -48,7 +48,7 @@ const DashboardHeader = ({
       </div>
 
       <div className="flex items-center space-x-3">
-        <button 
+        <button
           onClick={toggleTheme}
           className="p-2 bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl hover:bg-zinc-200 dark:hover:bg-white/10 transition-all text-zinc-500"
         >
@@ -59,9 +59,9 @@ const DashboardHeader = ({
           <Bell className="w-5 h-5 text-zinc-500 group-hover:text-blue-500 transition-colors" />
           <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border border-white dark:border-zinc-950"></span>
         </button>
-        
+
         <div className="relative" ref={profileRef}>
-          <button 
+          <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             className={`flex items-center space-x-2 p-1 pr-3 bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl ${currentTheme.borderHover} transition-all`}
           >
@@ -69,7 +69,7 @@ const DashboardHeader = ({
               {user?.name?.charAt(0) || 'U'}
             </div>
             <div className="hidden sm:block text-left leading-none">
-              <p className="text-xs font-bold">{user?.name || 'User'}</p>
+              <p className="text-md font-bold">{user?.name || 'User'}</p>
             </div>
             <ChevronDown className={`w-3 h-3 text-zinc-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
           </button>
