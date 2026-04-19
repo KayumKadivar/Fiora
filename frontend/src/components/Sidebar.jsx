@@ -39,7 +39,7 @@ const Sidebar = ({
         }`}
       >
         <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0 transition-all duration-300 ${active ? 'scale-110' : ''}`} />
-        {!isCollapsed && <span className="font-bold text-sm truncate transition-opacity duration-300">{label}</span>}
+        {!isCollapsed && <span className="font-bold text-md truncate transition-opacity duration-300">{label}</span>}
       </button>
       
       {isCollapsed && (
@@ -84,7 +84,7 @@ const Sidebar = ({
          )}
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto overflow-x-hidden custom-scrollbar scrollbar-hide py-4">
+      <nav className="flex-1 space-y-1 py-4 overflow-visible">
         {navItems.map((item, idx) => (
           <NavItem 
             key={idx} 
