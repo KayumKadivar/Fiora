@@ -1,11 +1,15 @@
 import React from 'react';
 import LoginForm from '../components/LoginForm';
 import ThemeToggle from '../components/ThemeToggle';
+import { useNavigate } from 'react-router-dom';
 
 const UserLogin = () => {
+  const navigate = useNavigate();
+
   const handleLogin = (credentials) => {
     console.log('User login attempt:', credentials);
     // Add logic here later
+    navigate('/dashboard');
   };
 
   return (
