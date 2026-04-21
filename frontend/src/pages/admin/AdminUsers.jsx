@@ -227,7 +227,7 @@ const AdminUsers = () => {
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-white/10 dark:to-white/5 flex items-center justify-center font-black text-zinc-950 dark:text-white group-hover:scale-110 transition-transform uppercase text-xl shadow-sm border border-white/5">
                         {user.name.charAt(0)}
                       </div>
-                      <span className="font-black text-zinc-900 dark:text-white group-hover:text-rose-500 transition-colors text-xl truncate max-w-[150px]">{user.name}</span>
+                      <span className="font-black text-zinc-900 dark:text-white group-hover:text-rose-500 transition-colors text-xl">{user.name}</span>
                     </div>
                   </td>
                   <td className="p-4">
