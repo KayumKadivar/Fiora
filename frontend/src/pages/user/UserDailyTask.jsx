@@ -9,7 +9,7 @@ const UserDailyTask = () => {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     contactName: '',
     contactNumber: '',
@@ -17,9 +17,29 @@ const UserDailyTask = () => {
     remarks: '',
     nextFollowUpDate: null
   });
+  const [fieldErrors, setFieldErrors] = useState({});
+
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+    if (fieldErrors[field]) {
+      setFieldErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Manual Validation
+    const errors = {};
+    if (!formData.contactName.trim()) errors.contactName = 'Contact Name is required';
+    if (!formData.contactNumber.trim()) errors.contactNumber = 'Contact Number is required';
+    if (!formData.remarks.trim()) errors.remarks = 'Remarks are required';
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+
     const taskToast = toast.loading('Submitting your work log...');
     try {
       setIsSubmitting(true);
@@ -56,7 +76,7 @@ const UserDailyTask = () => {
             <CheckCircle2 className="w-10 h-10 text-emerald-500" />
           </div>
           <h3 className="text-2xl font-black text-emerald-500 mb-3">Submission Successful!</h3>
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium leading-relaxed">Daily task recorded successfully.</p>
+          <p className="text-zinc-500 dark:text-zinc-400 text-md font-medium leading-relaxed">Daily task recorded successfully.</p>
         </div>
       </div>
     );
@@ -66,50 +86,50 @@ const UserDailyTask = () => {
     <div className="max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-[2.5rem] p-8 shadow-2xl backdrop-blur-sm relative overflow-hidden">
         <div className="flex items-center space-x-3 mb-8">
-           <div className="p-2.5 bg-blue-500/10 rounded-xl">
-              <ClipboardCheck className="w-6 h-6 text-blue-500" />
-           </div>
-           <div>
-              <h2 className="text-xl font-black">Daily Work Submission</h2>
-              <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider">Fill in the details of your visit</p>
-           </div>
+          <div className="p-2.5 bg-blue-500/10 rounded-xl">
+            <ClipboardCheck className="w-6 h-6 text-blue-500" />
+          </div>
+          <div>
+            <h2 className="text-xl font-black">Daily Work Submission</h2>
+            <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider">Fill in the details of your visit</p>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} noValidate className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1.5">
-              <label className="text-sm font-bold text-white flex items-center px-0.5 uppercase tracking-wider">
+              <label className="text-md font-bold text-white flex items-center px-0.5 uppercase tracking-wider">
                 Contact User Name
               </label>
               <div className="relative">
                 <input
                   type="text"
-                  required
                   value={formData.contactName}
-                  onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
+                  onChange={(e) => handleInputChange('contactName', e.target.value)}
                   placeholder="Enter name"
-                  className="w-full bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-xl pl-4 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white text-sm font-semibold shadow-sm"
+                  className={`w-full bg-zinc-50 dark:bg-black/20 border ${fieldErrors.contactName ? 'border-rose-500' : 'border-zinc-100 dark:border-white/5'} rounded-xl pl-4 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white text-md font-semibold shadow-sm`}
                 />
               </div>
+              {fieldErrors.contactName && <p className="text-rose-500 text-[14px] font-bold mt-1 ml-1">{fieldErrors.contactName}</p>}
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-bold text-white flex items-center px-0.5 uppercase tracking-wider">
+              <label className="text-md font-bold text-white flex items-center px-0.5 uppercase tracking-wider">
                 Contact Number
               </label>
               <input
                 type="tel"
-                required
                 value={formData.contactNumber}
-                onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
+                onChange={(e) => handleInputChange('contactNumber', e.target.value)}
                 placeholder="Enter number"
-                className="w-full bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white text-sm font-semibold shadow-sm"
+                className={`w-full bg-zinc-50 dark:bg-black/20 border ${fieldErrors.contactNumber ? 'border-rose-500' : 'border-zinc-100 dark:border-white/5'} rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white text-md font-semibold shadow-sm`}
               />
+              {fieldErrors.contactNumber && <p className="text-rose-500 text-[14px] font-bold mt-1 ml-1">{fieldErrors.contactNumber}</p>}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1.5">
-              <label className="text-sm font-bold text-white flex items-center px-0.5 uppercase tracking-wider">
+              <label className="text-md font-bold text-white flex items-center px-0.5 uppercase tracking-wider">
                 Next Follow-up Date
               </label>
               <DatePicker
@@ -117,7 +137,7 @@ const UserDailyTask = () => {
                 onChange={(date) => setFormData({ ...formData, nextFollowUpDate: date })}
                 dateFormat="dd/MM/yyyy"
                 placeholderText="Select Date"
-                className="w-full bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white text-sm font-semibold shadow-sm"
+                className="w-full bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white text-md font-semibold shadow-sm"
               />
             </div>
             <CustomDropdown
@@ -130,16 +150,17 @@ const UserDailyTask = () => {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-sm font-bold text-white flex items-center px-0.5 uppercase tracking-wider">
+            <label className="text-md font-bold text-white flex items-center px-0.5 uppercase tracking-wider">
               Remarks
             </label>
             <textarea
               rows="3"
               value={formData.remarks}
-              onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
+              onChange={(e) => handleInputChange('remarks', e.target.value)}
               placeholder="Describe the interaction..."
-              className="w-full bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none dark:text-white text-sm font-semibold shadow-sm"
+              className={`w-full bg-zinc-50 dark:bg-black/20 border ${fieldErrors.remarks ? 'border-rose-500' : 'border-zinc-100 dark:border-white/5'} rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none dark:text-white text-md font-semibold shadow-sm`}
             ></textarea>
+            {fieldErrors.remarks && <p className="text-rose-500 text-[14px] font-bold mt-1 ml-1">{fieldErrors.remarks}</p>}
           </div>
 
           {error && <p className="text-rose-500 text-xs font-bold">{error}</p>}
