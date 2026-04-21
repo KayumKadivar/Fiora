@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema({
   mobileNumber: { type: String },
   password: { type: String, required: true },
   status: { type: String, default: 'Active' },
-  designation: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

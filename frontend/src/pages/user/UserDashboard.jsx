@@ -1,159 +1,236 @@
-import React from 'react';
-import { Clock, CheckCircle2, AlertCircle, Phone, Calendar, User, Briefcase, TrendingUp, StopCircle, RefreshCw, PlayCircle, MoreHorizontal } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { 
+  Clock, 
+  CheckCircle2, 
+  AlertCircle, 
+  Phone, 
+  Calendar, 
+  User, 
+  Briefcase, 
+  TrendingUp, 
+  RefreshCw, 
+  Loader2, 
+  ArrowRight,
+  PlusCircle,
+  History,
+  LayoutDashboard,
+  Zap
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const UserDashboard = () => {
-  // Mock data for the dashboard layout
-  const contactStats = [
-    { label: 'No Response', total: 0, today: 0, icon: AlertCircle, color: 'text-zinc-400' },
-    { label: 'Trying', total: 0, today: 0, icon: Phone, color: 'text-blue-500' },
-    { label: 'New', total: 1, today: 1, icon: User, color: 'text-emerald-500' },
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    setCurrentUser(user);
+
+    const fetchLogs = async () => {
+      try {
+        const response = await fetch('/api/worklogs');
+        if (!response.ok) throw new Error('Failed to fetch logs');
+        const data = await response.json();
+
+        // Filter logs for current user
+        const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const userLogs = data.filter(log => 
+          log.userName && log.userName === loggedInUser.name
+        );
+        setLogs(userLogs);
+      } catch (err) {
+        console.error('Dashboard fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLogs();
+  }, []);
+
+  const today = new Date().toLocaleDateString();
+
+  const stats = [
+    {
+      label: 'Total Submissions',
+      value: logs.length,
+      subValue: logs.filter(l => new Date(l.createdAt).toLocaleDateString() === today).length + " today",
+      icon: LayoutDashboard,
+      color: 'text-blue-500',
+      bg: 'bg-blue-500/10'
+    },
+    {
+      label: 'Good Status',
+      value: logs.filter(l => l.status === 'Good').length,
+      subValue: "Positive feedback",
+      icon: CheckCircle2,
+      color: 'text-emerald-500',
+      bg: 'bg-emerald-500/10'
+    },
+    {
+      label: 'Follow-ups',
+      value: logs.filter(l => l.nextFollowUpDate).length,
+      subValue: "Scheduled visits",
+      icon: Calendar,
+      color: 'text-amber-500',
+      bg: 'bg-amber-500/10'
+    },
+    {
+      label: 'Performance',
+      value: Math.round((logs.filter(l => l.status === 'Good').length / (logs.length || 1)) * 100) + '%',
+      subValue: "Good rating avg",
+      icon: Zap,
+      color: 'text-rose-500',
+      bg: 'bg-rose-500/10'
+    }
   ];
 
-  const customerStats = [
-    { label: 'Stopped', total: 0, today: 0, icon: StopCircle, color: 'text-rose-500' },
-    { label: 'Irregular', total: 0, today: 0, icon: RefreshCw, color: 'text-amber-500' },
-    { label: 'Running', total: 0, today: 0, icon: PlayCircle, color: 'text-emerald-500' },
+  const quickActions = [
+    { label: 'Submit Daily Task', icon: PlusCircle, path: '/dashboard/task', color: 'bg-blue-600' },
+    { label: 'View Work Logs', icon: History, path: '/dashboard/logs', color: 'bg-zinc-800' }
   ];
 
-  const reminderStats = [
-    { label: 'Total Reminder', value: 1, color: 'bg-amber-100 dark:bg-amber-500/10 text-amber-600' },
-    { label: 'Done Reminder', value: 0, color: 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600' },
-    { label: 'Pending Reminder', value: 0, color: 'bg-rose-100 dark:bg-rose-500/10 text-rose-600' },
-    { label: "Today's Talk", value: 1, color: 'bg-blue-100 dark:bg-blue-500/10 text-blue-600' },
-    { label: 'Total pending Reminder', value: 1, color: 'bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600' },
-  ];
-
-  const talkList = [
-    { name: 'ABC CERAMIC PVT LTD', role: 'SALES - Order - fdrykjgutdyt', response: 'GOOD', date: '20 Apr 2026', type: 'REMINDER' }
-  ];
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
+        <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+        <p className="text-zinc-950 dark:text-white font-black uppercase tracking-[0.2em] text-xl">Initializing Workspace...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Stats Section */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Contact & Customer Groups */}
-          <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-[2rem] p-8 shadow-sm backdrop-blur-sm">
-            <div className="space-y-8">
-              {/* Contact Group */}
-              <div>
-                <h3 className="text-[14px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-6 flex items-center">
-                  <Phone className="w-3 h-3 mr-2" /> Contact
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {contactStats.map((stat, idx) => (
-                    <div key={idx} className="p-4 rounded-2xl bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 hover:border-blue-500/30 transition-all group">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400">{stat.label}</span>
-                        <stat.icon className={`w-4 h-4 ${stat.color} opacity-50 group-hover:opacity-100 transition-opacity`} />
-                      </div>
-                      <div className="flex items-end justify-between">
-                        <div className="text-2xl font-black">{stat.total} <span className="text-[14px] text-zinc-500">total</span></div>
-                        <div className="px-2 py-1 bg-white dark:bg-white/5 rounded-lg text-[9px] font-black text-blue-500 shadow-sm border border-blue-500/10">Today: {stat.today}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Customer Group */}
-              <div>
-                <h3 className="text-[14px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-6 flex items-center">
-                  <Briefcase className="w-3 h-3 mr-2" /> Customer
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {customerStats.map((stat, idx) => (
-                    <div key={idx} className="p-4 rounded-2xl bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 hover:border-blue-500/30 transition-all group">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400">{stat.label}</span>
-                        <stat.icon className={`w-4 h-4 ${stat.color} opacity-50 group-hover:opacity-100 transition-opacity`} />
-                      </div>
-                      <div className="flex items-end justify-between">
-                        <div className="text-2xl font-black">{stat.total} <span className="text-[14px] text-zinc-500">total</span></div>
-                        <div className="px-2 py-1 bg-white dark:bg-white/5 rounded-lg text-[9px] font-black text-blue-500 shadow-sm border border-blue-500/10">Today: {stat.today}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 pt-6 border-t border-zinc-100 dark:border-white/5 flex justify-end">
-              <button className="text-[14px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-600 transition-colors">See All</button>
-            </div>
-          </div>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
+      
+      {/* Welcome Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-md p-8 text-white shadow-xl relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+          <Briefcase className="w-48 h-48 rotate-12" />
         </div>
-
-        {/* Clock In/Out Section */}
-        <div className="space-y-6">
-          <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-[2rem] p-6 shadow-sm backdrop-blur-sm">
-            <div className="flex gap-3 mb-6">
-              <button className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-md flex items-center justify-center shadow-lg shadow-blue-600/20 transition-all transform active:scale-95">
-                <Clock className="w-4 h-4 mr-2" /> Clock In
+        <div className="relative z-10">
+          <h1 className="text-4xl font-black mb-2">Hello, {currentUser?.name?.split(' ')[0] || 'Agent'}!</h1>
+          <p className="text-blue-100 text-xl font-bold uppercase tracking-widest max-w-lg opacity-80">
+            Welcome back to your dashboard. You have {logs.filter(l => new Date(l.createdAt).toLocaleDateString() === today).length} tasks completed today.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            {quickActions.map((action, idx) => (
+              <button
+                key={idx}
+                onClick={() => navigate(action.path)}
+                className={`flex items-center space-x-3 px-6 py-3 ${action.color} rounded-md font-black text-lg transition-all hover:scale-105 active:scale-95 shadow-lg border border-white/10`}
+              >
+                <action.icon className="w-5 h-5" />
+                <span>{action.label}</span>
               </button>
-              <button className="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-black text-md flex items-center justify-center shadow-lg shadow-rose-500/20 transition-all transform active:scale-95">
-                <CheckCircle2 className="w-4 h-4 mr-2" /> Clock Out
-              </button>
-            </div>
-            <div>
-              <h4 className="text-[14px] font-black uppercase tracking-widest text-zinc-400 mb-4">Today's Activity</h4>
-              <div className="py-10 text-center border-2 border-dashed border-zinc-100 dark:border-white/5 rounded-2xl">
-                <p className="text-xs text-zinc-500 font-bold">No activity yet today.</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Reminder Cards Section */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {reminderStats.map((stat, idx) => (
-          <div key={idx} className={`${stat.color} rounded-[1.5rem] p-6 shadow-sm border border-white/5 text-center transform hover:scale-105 transition-all cursor-pointer`}>
-            <h3 className="text-[14px] font-black uppercase tracking-widest mb-2 opacity-70">{stat.label}</h3>
-            <p className="text-3xl font-black">{stat.value}</p>
+      {/* Main Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, idx) => (
+          <div key={idx} className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-md p-6 shadow-sm flex items-center space-x-5 group hover:border-blue-500/50 transition-all">
+            <div className={`p-4 ${stat.bg} rounded-md group-hover:scale-110 transition-transform`}>
+              <stat.icon className={`w-6 h-6 ${stat.color}`} />
+            </div>
+            <div>
+              <p className="text-zinc-500 dark:text-white/60 text-base font-black uppercase tracking-widest leading-none mb-1">{stat.label}</p>
+              <h3 className="text-3xl font-black text-zinc-950 dark:text-white">{stat.value}</h3>
+              <p className="text-[10px] font-black uppercase text-blue-500 tracking-tighter mt-0.5">{stat.subValue}</p>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Lists Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-[2rem] p-8 shadow-sm backdrop-blur-sm">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-xl font-black">Today's Talk List</h3>
-            <span className="text-[14px] font-black text-zinc-400 uppercase tracking-widest">{talkList.length} talk tracked</span>
+      {/* Activity Sections */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Recent Activity Log */}
+        <div className="lg:col-span-2 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-md shadow-sm overflow-hidden flex flex-col">
+          <div className="p-6 border-b border-zinc-100 dark:border-white/5 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <History className="w-5 h-5 text-blue-500" />
+              <h2 className="text-2xl font-black">Recent Activity</h2>
+            </div>
+            <button 
+              onClick={() => navigate('/dashboard/logs')}
+              className="text-sm font-black text-blue-500 hover:text-blue-600 flex items-center uppercase tracking-widest"
+            >
+              View All <ArrowRight className="w-3 h-3 ml-1" />
+            </button>
           </div>
-          <div className="space-y-4">
-            {talkList.map((talk, idx) => (
-              <div key={idx} className="p-4 bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-2xl flex items-center justify-between group hover:border-blue-500/30 transition-all">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-blue-600/20 group-hover:scale-110 transition-transform">
-                    {talk.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className="font-black text-md">{talk.name}</h4>
-                    <p className="text-[14px] text-zinc-500 font-bold uppercase tracking-wider">{talk.role}</p>
-                    <p className="text-[14px] text-zinc-400 mt-1">Doc Sent - Response: <span className="text-emerald-500">{talk.response}</span></p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-500/20 text-amber-600 text-[9px] font-black rounded uppercase tracking-widest">{talk.type}</span>
-                  <p className="text-[14px] text-zinc-400 mt-1 font-bold">{talk.date}</p>
-                </div>
+          <div className="flex-1 p-6 space-y-4">
+            {logs.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-zinc-400">
+                <LayoutDashboard className="w-12 h-12 mb-4 opacity-20" />
+                <p className="text-xl font-bold uppercase tracking-widest">No activities logged yet</p>
               </div>
-            ))}
+            ) : (
+              logs.slice(0, 4).map((log, idx) => (
+                <div key={idx} className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 rounded-md hover:border-blue-500/30 transition-all group">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center font-black text-blue-500 text-2xl uppercase border border-blue-500/20">
+                      {log.contactName.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 className="font-black text-xl text-zinc-900 dark:text-white leading-none mb-1">{log.contactName}</h4>
+                      <p className="text-base text-zinc-500 dark:text-white/60 font-bold">{log.contactNumber}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border ${
+                      log.status === 'Good' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 
+                      log.status === 'Medium' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 
+                      'bg-rose-500/10 text-rose-500 border-rose-500/20'
+                    }`}>
+                      {log.status}
+                    </span>
+                    <p className="text-[11px] font-black text-zinc-400 dark:text-white/40 mt-1 uppercase tracking-tighter">
+                      {new Date(log.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
-        <div className="bg-zinc-50/50 dark:bg-emerald-500/5 border border-zinc-200 dark:border-white/10 rounded-[2rem] p-8 shadow-sm backdrop-blur-sm">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-xl font-black">Today's Reminder List</h3>
-            <span className="text-[14px] font-black text-zinc-400 uppercase tracking-widest">0 reminders</span>
+        {/* Reminders/Follow-ups Sidebar */}
+        <div className="bg-zinc-50 dark:bg-emerald-500/5 border border-zinc-200 dark:border-white/10 rounded-md shadow-sm overflow-hidden flex flex-col">
+          <div className="p-6 border-b border-zinc-200 dark:border-white/10 flex items-center space-x-3">
+            <Zap className="w-5 h-5 text-amber-500" />
+            <h2 className="text-2xl font-black">Upcoming</h2>
           </div>
-          <div className="py-20 text-center">
-            <p className="text-xs text-zinc-500 font-bold">No reminders for today.</p>
+          <div className="flex-1 p-6 space-y-4">
+            {logs.filter(l => l.nextFollowUpDate).length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-zinc-400">
+                <Calendar className="w-10 h-10 mb-4 opacity-20" />
+                <p className="text-base font-bold uppercase tracking-widest text-center">No follow-ups<br/>scheduled</p>
+              </div>
+            ) : (
+              logs.filter(l => l.nextFollowUpDate).slice(0, 3).map((log, idx) => (
+                <div key={idx} className="p-4 bg-white dark:bg-black/30 border border-zinc-200 dark:border-white/10 rounded-md group hover:border-amber-500/50 transition-all shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em]">Follow Up</span>
+                    <div className="text-zinc-950 dark:text-white font-black flex items-center text-xs">
+                      <Clock className="w-3 h-3 mr-1" />
+                      {new Date(log.nextFollowUpDate).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                    </div>
+                  </div>
+                  <h4 className="font-black text-xl text-zinc-900 dark:text-white">{log.contactName}</h4>
+                  <p className="text-base text-zinc-500 dark:text-white/60 font-bold mb-3">{log.contactNumber}</p>
+                  <button className="w-full py-2 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 rounded-md text-sm font-black uppercase tracking-widest transition-all">
+                    Action Now
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         </div>
+
       </div>
 
     </div>

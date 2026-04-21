@@ -20,7 +20,6 @@ const seedAdmin = async () => {
       email: 'admin@gmail.com',
       password: 'admin@123', // In a real app, hash this!
       status: 'Active',
-      designation: 'System Administrator',
       mobilePrefix: '+91',
       mobileNumber: '1234567890'
     });

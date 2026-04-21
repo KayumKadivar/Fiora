@@ -7,7 +7,16 @@ const DashboardLayout = ({ logo, logoText, navItems, theme, user, onLogoutPath, 
   const navigate = useNavigate();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
+  const [isDark, setIsDark] = useState(true);
+  
+  useEffect(() => {
+    // Sync with initial state
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
 
   const toggleTheme = () => {
     const newDark = !isDark;

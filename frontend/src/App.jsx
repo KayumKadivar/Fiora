@@ -12,6 +12,7 @@ import UserDashboard from './pages/user/UserDashboard';
 import UserDailyTask from './pages/user/UserDailyTask';
 import UserSearch from './pages/user/UserSearch';
 import UserSettings from './pages/user/UserSettings';
+import UserWorkLogs from './pages/user/UserWorkLogs';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -35,6 +36,7 @@ const App = () => {
           <Route index element={<UserDashboard />} />
           <Route path="task" element={<UserDailyTask />} />
           <Route path="search" element={<UserSearch />} />
+          <Route path="logs" element={<UserWorkLogs />} />
           <Route path="settings" element={<UserSettings />} />
         </Route>
 

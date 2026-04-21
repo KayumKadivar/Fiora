@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ClipboardCheck, Search, Settings, TrendingUp } from 'lucide-react';
+import { ClipboardCheck, Search, Settings, TrendingUp, History } from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
 
 const UserLayout = () => {
@@ -27,6 +27,12 @@ const UserLayout = () => {
       onClick: () => navigate('/dashboard/search') 
     },
     { 
+      icon: History, 
+      label: "My Work Logs", 
+      active: location.pathname === '/dashboard/logs', 
+      onClick: () => navigate('/dashboard/logs') 
+    },
+    { 
       icon: Settings, 
       label: "Settings", 
       active: location.pathname === '/dashboard/settings', 
@@ -36,9 +42,12 @@ const UserLayout = () => {
 
   const getActiveTitle = () => {
     if (location.pathname === '/dashboard/search') return 'Search Data';
+    if (location.pathname === '/dashboard/logs') return 'My Task History';
     if (location.pathname === '/dashboard/settings') return 'Settings';
     return 'Daily Work Submission';
   };
+
+  const user = JSON.parse(localStorage.getItem('user') || '{"name": "User", "email": "user@fiora.com"}');
 
   return (
     <DashboardLayout
@@ -46,7 +55,7 @@ const UserLayout = () => {
       logoText="Fiora"
       navItems={navItems}
       theme="blue"
-      user={{ name: "User Agent", email: "user@fiora.com" }}
+      user={user}
       onLogoutPath="/"
       activeTitle={getActiveTitle()}
     />
