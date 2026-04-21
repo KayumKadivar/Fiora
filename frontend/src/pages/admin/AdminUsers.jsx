@@ -173,7 +173,7 @@ const AdminUsers = () => {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Active Team Section */}
       <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-md overflow-hidden shadow-xl backdrop-blur-sm">
-        <div className="p-8 border-b border-zinc-100 dark:border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-8 border-b border-zinc-100 dark:border-white/5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center space-x-4">
             <div className="p-3 bg-rose-500/10 rounded-md">
               <Users className="w-6 h-6 text-rose-500" />

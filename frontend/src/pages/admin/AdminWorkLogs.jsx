@@ -142,7 +142,7 @@ const AdminWorkLogs = () => {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Stats Section */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-md p-6 shadow-sm backdrop-blur-sm group hover:border-blue-500/50 transition-all">
           <h3 className="text-zinc-500 dark:text-white/60 text-base font-black uppercase tracking-widest mb-2">Total Logs</h3>
           <p className="text-4xl font-black">{stats.total}</p>
@@ -163,7 +163,7 @@ const AdminWorkLogs = () => {
 
       {/* Filter Bar */}
       <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-md p-6 shadow-xl backdrop-blur-md">
-        <div className="flex flex-col lg:flex-row lg:items-end gap-6">
+        <div className="flex flex-wrap lg:flex-row lg:items-end gap-6">
           {/* Search */}
           <div className="flex-1 space-y-2">
             <label className="text-base font-black uppercase tracking-widest text-zinc-950 dark:text-white flex items-center px-1">

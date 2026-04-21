@@ -128,7 +128,7 @@ const UserWorkLogs = () => {
   return (
     <div className="space-y-6 lg:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Stats Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-md p-4 lg:p-6 shadow-sm backdrop-blur-sm">
           <h3 className="text-zinc-950 dark:text-white text-base font-black uppercase tracking-widest mb-2">Total</h3>
           <p className="text-2xl lg:text-3xl font-black">{stats.total}</p>
@@ -171,8 +171,8 @@ const UserWorkLogs = () => {
                   key={status}
                   onClick={() => setStatusFilter(status)}
                   className={`px-4 py-2 rounded-md text-base font-black transition-all ${statusFilter === status
-                      ? 'bg-blue-600 text-zinc-950 dark:text-white shadow-lg shadow-blue-500/20'
-                      : 'text-zinc-500 dark:text-white/60 hover:bg-zinc-200 dark:hover:bg-white/5'
+                    ? 'bg-blue-600 text-zinc-950 dark:text-white shadow-lg shadow-blue-500/20'
+                    : 'text-zinc-500 dark:text-white/60 hover:bg-zinc-200 dark:hover:bg-white/5'
                     }`}
                 >
                   {status}

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Clock, 
-  CheckCircle2, 
-  AlertCircle, 
-  Phone, 
-  Calendar, 
-  User, 
-  Briefcase, 
-  TrendingUp, 
-  RefreshCw, 
-  Loader2, 
+import {
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Phone,
+  Calendar,
+  User,
+  Briefcase,
+  TrendingUp,
+  RefreshCw,
+  Loader2,
   ArrowRight,
   PlusCircle,
   History,
@@ -36,7 +36,7 @@ const UserDashboard = () => {
 
         // Filter logs for current user
         const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
-        const userLogs = data.filter(log => 
+        const userLogs = data.filter(log =>
           log.userName && log.userName === loggedInUser.name
         );
         setLogs(userLogs);
@@ -103,7 +103,7 @@ const UserDashboard = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
-      
+
       {/* Welcome Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-md p-8 text-white shadow-xl relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
@@ -130,7 +130,7 @@ const UserDashboard = () => {
       </div>
 
       {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         {stats.map((stat, idx) => (
           <div key={idx} className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-md p-6 shadow-sm flex items-center space-x-5 group hover:border-blue-500/50 transition-all">
             <div className={`p-4 ${stat.bg} rounded-md group-hover:scale-110 transition-transform`}>
@@ -146,8 +146,8 @@ const UserDashboard = () => {
       </div>
 
       {/* Activity Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
         {/* Recent Activity Log */}
         <div className="lg:col-span-2 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-md shadow-sm overflow-hidden flex flex-col">
           <div className="p-6 border-b border-zinc-100 dark:border-white/5 flex items-center justify-between">
@@ -155,7 +155,7 @@ const UserDashboard = () => {
               <History className="w-5 h-5 text-blue-500" />
               <h2 className="text-2xl font-black">Recent Activity</h2>
             </div>
-            <button 
+            <button
               onClick={() => navigate('/dashboard/logs')}
               className="text-sm font-black text-blue-500 hover:text-blue-600 flex items-center uppercase tracking-widest"
             >
@@ -181,11 +181,10 @@ const UserDashboard = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border ${
-                      log.status === 'Good' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 
-                      log.status === 'Medium' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 
-                      'bg-rose-500/10 text-rose-500 border-rose-500/20'
-                    }`}>
+                    <span className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border ${log.status === 'Good' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
+                        log.status === 'Medium' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                          'bg-rose-500/10 text-rose-500 border-rose-500/20'
+                      }`}>
                       {log.status}
                     </span>
                     <p className="text-[11px] font-black text-zinc-400 dark:text-white/40 mt-1 uppercase tracking-tighter">
@@ -208,7 +207,7 @@ const UserDashboard = () => {
             {logs.filter(l => l.nextFollowUpDate).length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-zinc-400">
                 <Calendar className="w-10 h-10 mb-4 opacity-20" />
-                <p className="text-base font-bold uppercase tracking-widest text-center">No follow-ups<br/>scheduled</p>
+                <p className="text-base font-bold uppercase tracking-widest text-center">No follow-ups<br />scheduled</p>
               </div>
             ) : (
               logs.filter(l => l.nextFollowUpDate).slice(0, 3).map((log, idx) => (

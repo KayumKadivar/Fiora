@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Stats Section */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-md p-8 shadow-sm backdrop-blur-sm">
@@ -56,7 +56,7 @@ const AdminDashboard = () => {
                 <h3 className="text-base font-black uppercase tracking-[0.2em] text-zinc-950 dark:text-white mb-6 flex items-center">
                   <Users className="w-3 h-3 mr-2" /> Global Contact Overview
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
                   {contactStats.map((stat, idx) => (
                     <div key={idx} className="p-4 rounded-md bg-zinc-50 dark:bg-black/20 border border-zinc-100 dark:border-white/5 hover:border-blue-500/30 transition-all group">
                       <div className="flex items-center justify-between mb-2">
@@ -106,7 +106,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Reminder Cards Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
         {reminderStats.map((stat, idx) => (
           <div key={idx} className={`${stat.color} rounded-md p-6 shadow-sm border border-white/5 text-center transform hover:scale-105 transition-all cursor-pointer`}>
             <h3 className="text-base font-black uppercase tracking-widest mb-2 opacity-70">{stat.label}</h3>
@@ -116,7 +116,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Lists Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div className="bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-md p-8 shadow-sm backdrop-blur-sm">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-2xl font-black">Latest Submissions</h3>
