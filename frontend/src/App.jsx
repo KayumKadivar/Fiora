@@ -19,10 +19,14 @@ import AdminWorkLogs from './pages/admin/AdminWorkLogs';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminSettings from './pages/admin/AdminSettings';
 
+import { Toaster } from 'react-hot-toast';
+
 const App = () => {
   return (
-    <Router>
-      <Routes>
+    <>
+      <Toaster position="top-right" reverseOrder={false} />
+      <Router>
+        <Routes>
         <Route path="/" element={<UserLogin />} />
         <Route path="/admin" element={<AdminLogin />} />
 
@@ -44,7 +48,8 @@ const App = () => {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </Router>
+      </Router>
+    </>
   );
 };
 

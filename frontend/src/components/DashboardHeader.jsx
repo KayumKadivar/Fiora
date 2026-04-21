@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bell, User, Settings, LogOut, ChevronDown, Sun, Moon } from 'lucide-react';
+import { Bell, User, Settings, LogOut, ChevronDown, Sun, Moon, Menu } from 'lucide-react';
 
 const DashboardHeader = ({
   title,
@@ -7,7 +7,8 @@ const DashboardHeader = ({
   onLogout,
   isDark,
   toggleTheme,
-  theme = 'blue'
+  theme = 'blue',
+  toggleMobileMenu
 }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef(null);
@@ -40,9 +41,15 @@ const DashboardHeader = ({
   const currentTheme = themeStyles[theme] || themeStyles.blue;
 
   return (
-    <header className="h-16 bg-white/80 dark:bg-black/40 border-b border-zinc-200 dark:border-white/5 backdrop-blur-xl z-[100] px-6 flex items-center justify-between shrink-0 shadow-sm">
-      <div className="flex items-center space-x-6">
-        <h2 className="text-lg font-bold tracking-tight text-zinc-500 dark:text-zinc-400">
+    <header className="h-16 bg-white/80 dark:bg-black/40 border-b border-zinc-200 dark:border-white/5 backdrop-blur-xl z-[100] px-4 sm:px-6 flex items-center justify-between shrink-0 shadow-sm">
+      <div className="flex items-center space-x-3 sm:space-x-6">
+        <button 
+          onClick={toggleMobileMenu}
+          className="p-2 hover:bg-zinc-100 dark:hover:bg-white/5 rounded-xl lg:hidden text-zinc-500"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+        <h2 className="text-sm sm:text-lg font-bold tracking-tight text-zinc-500 dark:text-zinc-400 truncate max-w-[150px] sm:max-w-none">
           {title}
         </h2>
       </div>

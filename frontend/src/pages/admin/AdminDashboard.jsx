@@ -12,7 +12,7 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/worklogs');
+      const response = await fetch('/api/worklogs');
       const data = await response.json();
       setStats({
         total: data.length,

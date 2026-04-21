@@ -9,7 +9,7 @@ const AdminWorkLogs = () => {
   const fetchWorkLogs = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/worklogs');
+      const response = await fetch('/api/worklogs');
       if (!response.ok) throw new Error('Failed to fetch work logs');
       const data = await response.json();
       setWorkLogs(data);

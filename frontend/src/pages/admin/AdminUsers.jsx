@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, UserPlus, Eye, EyeOff, Smartphone, Clock, ShieldCheck, Mail, User, Briefcase, Activity, Loader2, X, Plus } from 'lucide-react';
+import toast from 'react-hot-toast';
 import CustomDropdown from '../../components/CustomDropdown';
 
 const AdminUsers = () => {
@@ -25,7 +26,7 @@ const AdminUsers = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/users');
+      const response = await fetch('/api/users');
       if (!response.ok) throw new Error('Failed to fetch users');
       const data = await response.json();
       setUsers(data);
@@ -45,7 +46,7 @@ const AdminUsers = () => {
     e.preventDefault();
     try {
       setIsSubmitting(true);
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newUser)
@@ -58,6 +59,7 @@ const AdminUsers = () => {
 
       const createdUser = await response.json();
       setUsers([createdUser, ...users]);
+      toast.success('User created successfully!');
       
       // Reset form and close modal
       setNewUser({
@@ -74,6 +76,7 @@ const AdminUsers = () => {
       setIsModalOpen(false);
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || 'Failed to create user');
     } finally {
       setIsSubmitting(false);
     }
@@ -172,9 +175,9 @@ const AdminUsers = () => {
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-zinc-950/60 backdrop-blur-md animate-in fade-in duration-300" onClick={() => setIsModalOpen(false)}></div>
           
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-[2.5rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative z-10 animate-in zoom-in-95 fade-in duration-300 custom-scrollbar">
-            <div className="p-8">
-              <div className="flex items-center justify-between mb-8">
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-2xl sm:rounded-[2.5rem] w-full max-w-4xl max-h-[95vh] overflow-y-auto shadow-2xl relative z-10 animate-in zoom-in-95 fade-in duration-300 custom-scrollbar">
+            <div className="p-4 sm:p-8">
+              <div className="flex items-center justify-between mb-6 sm:mb-8">
                 <div className="flex items-center space-x-4">
                   <div className="p-3 bg-rose-500/10 rounded-2xl">
                     <UserPlus className="w-6 h-6 text-rose-500" />

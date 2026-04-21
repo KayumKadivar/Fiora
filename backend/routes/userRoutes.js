@@ -13,6 +13,23 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Login route
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    
+    if (!user || user.password !== password) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // In a real app, you would generate a JWT here
+    res.json({ message: 'Login successful', user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Get all users
 router.get('/', async (req, res) => {
   try {

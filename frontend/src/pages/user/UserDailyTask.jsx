@@ -3,6 +3,7 @@ import { User, Phone, ClipboardCheck, MessageSquare, Send, CheckCircle2, Loader2
 import CustomDropdown from '../../components/CustomDropdown';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import toast from 'react-hot-toast';
 
 const UserDailyTask = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -19,12 +20,13 @@ const UserDailyTask = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const taskToast = toast.loading('Submitting your work log...');
     try {
       setIsSubmitting(true);
       setError(null);
       // For now, we use a default user name since auth isn't fully implemented
       const submissionData = { ...formData, userName: 'User Agent' };
-      const response = await fetch('http://localhost:5000/api/worklogs', {
+      const response = await fetch('/api/worklogs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submissionData)
@@ -32,6 +34,7 @@ const UserDailyTask = () => {
 
       if (!response.ok) throw new Error('Failed to submit task');
 
+      toast.success('Task submitted successfully!', { id: taskToast });
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
@@ -39,6 +42,7 @@ const UserDailyTask = () => {
       }, 3000);
     } catch (err) {
       setError(err.message);
+      toast.error(err.message, { id: taskToast });
     } finally {
       setIsSubmitting(false);
     }

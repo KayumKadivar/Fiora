@@ -8,7 +8,9 @@ const Sidebar = ({
   logoText, 
   navItems, 
   onLogout,
-  theme = 'blue'
+  theme = 'blue',
+  isMobile = false,
+  onCloseMobile
 }) => {
   
   const themeStyles = {
@@ -33,7 +35,10 @@ const Sidebar = ({
   const NavItem = ({ icon: Icon, label, active, onClick }) => (
     <div className="relative group flex items-center px-3">
       <button 
-        onClick={onClick}
+        onClick={() => {
+          onClick();
+          if (isMobile && onCloseMobile) onCloseMobile();
+        }}
         className={`w-full flex items-center ${isCollapsed ? 'justify-center py-4' : 'space-x-3 px-4 py-3'} rounded-xl transition-all duration-300 ${
           active ? `${currentTheme.activeBg} ${currentTheme.activeText} shadow-md ring-1 ${currentTheme.ring}` : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/5 hover:text-zinc-900 dark:hover:text-white'
         }`}
@@ -52,7 +57,7 @@ const Sidebar = ({
   );
 
   return (
-    <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-black/40 border-r border-zinc-200 dark:border-white/5 flex flex-col backdrop-blur-xl transition-all duration-300 relative z-[110] h-screen shrink-0 shadow-2xl shadow-zinc-500/5`}>
+    <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-zinc-900 lg:dark:bg-black/40 border-r border-zinc-200 dark:border-white/5 flex flex-col backdrop-blur-xl transition-all duration-300 relative z-[110] h-screen shrink-0 shadow-2xl`}>
       <div className="flex items-center justify-between px-6 h-16 border-b border-zinc-200 dark:border-white/5 overflow-visible shrink-0">
          <div 
            className={`flex items-center space-x-3 group/logo relative ${isCollapsed ? 'cursor-col-resize' : 'cursor-pointer'}`}
@@ -66,20 +71,14 @@ const Sidebar = ({
                 {logoText}
               </h1>
             )}
-            {isCollapsed && (
-              <div className="absolute left-full ml-4 px-3 py-1.5 bg-zinc-900 dark:bg-zinc-800 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg opacity-0 invisible group-hover/logo:opacity-100 group-hover/logo:visible translate-x-[-10px] group-hover/logo:translate-x-0 transition-all duration-300 whitespace-nowrap z-[200] shadow-xl border border-white/10 pointer-events-none">
-                Open Sidebar
-                <div className="absolute top-1/2 -left-1.5 -translate-y-1/2 w-3 h-3 bg-zinc-900 dark:bg-zinc-800 border-l border-t border-white/10 rotate-[-45deg] z-[-1]"></div>
-              </div>
-            )}
          </div>
 
          {!isCollapsed && (
            <button 
-             onClick={() => setIsCollapsed(true)}
+             onClick={() => isMobile ? onCloseMobile() : setIsCollapsed(true)}
              className="p-1.5 hover:bg-zinc-100 dark:hover:bg-white/5 rounded-lg text-zinc-400 hover:text-blue-500 transition-all"
            >
-             <PanelLeftClose className="w-5 h-5" />
+             <PanelLeftClose className={`w-5 h-5 ${isMobile ? 'rotate-180' : ''}`} />
            </button>
          )}
       </div>

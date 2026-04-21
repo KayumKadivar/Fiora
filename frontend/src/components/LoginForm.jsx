@@ -11,14 +11,14 @@ const LoginForm = ({ title, subtitle, role, onSubmit }) => {
   };
 
   return (
-    <div className="w-full max-w-md p-8 rounded-3xl bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-zinc-200 dark:border-white/10 shadow-2xl relative overflow-hidden transition-all duration-500">
+    <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-zinc-200 dark:border-white/10 shadow-2xl relative overflow-hidden transition-all duration-500">
       {/* Background decoration */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-purple-300/40 dark:bg-purple-500/10 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-300/40 dark:bg-blue-500/10 rounded-full blur-3xl -z-10 -translate-x-1/2 translate-y-1/2" />
 
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-zinc-900 dark:text-white mb-2 tracking-tight transition-colors">{title}</h2>
-        <p className="text-zinc-500 dark:text-zinc-400 text-sm transition-colors">{subtitle}</p>
+      <div className="text-center mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white mb-2 tracking-tight transition-colors">{title}</h2>
+        <p className="text-zinc-500 dark:text-zinc-400 text-xs sm:text-sm transition-colors">{subtitle}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 z-10 relative">
