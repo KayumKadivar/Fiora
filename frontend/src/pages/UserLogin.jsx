@@ -3,13 +3,40 @@ import LoginForm from '../components/LoginForm';
 import ThemeToggle from '../components/ThemeToggle';
 import { useNavigate } from 'react-router-dom';
 
+import toast from 'react-hot-toast';
+
 const UserLogin = () => {
   const navigate = useNavigate();
 
-  const handleLogin = (credentials) => {
-    console.log('User login attempt:', credentials);
-    // Add logic here later
-    navigate('/dashboard');
+  const handleLogin = async (credentials) => {
+    console.log('Login attempt started:', credentials.email);
+    const loginToast = toast.loading('Signing in...');
+    try {
+      const response = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      toast.success('Welcome back!', { id: loginToast });
+      
+      // Store user info (simple version)
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      if (data.user.role === 'Admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      toast.error(err.message, { id: loginToast });
+    }
   };
 
   return (

@@ -29,13 +29,13 @@ const CustomDropdown = ({ label, icon: Icon, options, value, onChange, theme = '
   return (
     <div className="space-y-1.5 relative w-full" ref={dropdownRef}>
       <label className="text-md font-bold text-zinc-500 dark:text-zinc-400 flex items-center px-0.5 uppercase tracking-wider">
-        <Icon className={`w-4 h-4 mr-2 ${iconColor}`} /> {label}
+        {Icon && <Icon className={`w-4 h-4 mr-2 ${iconColor}`} />} {label}
       </label>
       <div className="relative">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full bg-zinc-50 dark:bg-black/20 border border-zinc-200 dark:border-white/5 rounded-xl px-4 py-2.5 text-left focus:outline-none focus:ring-2 ${ringColor} transition-all text-zinc-900 dark:text-white flex items-center justify-between shadow-sm text-sm`}
+          className={`w-full bg-zinc-50 dark:bg-black/20 border border-zinc-200 dark:border-white/5 rounded-xl px-4 py-2.5 text-left focus:outline-none focus:ring-2 ${ringColor} transition-all text-zinc-900 dark:text-white flex items-center justify-between shadow-sm text-md`}
         >
           <span className="font-semibold">{value}</span>
           <ChevronDown className={`w-4 h-4 text-zinc-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -51,9 +51,9 @@ const CustomDropdown = ({ label, icon: Icon, options, value, onChange, theme = '
                   onChange(option);
                   setIsOpen(false);
                 }}
-                className={`w-full text-left px-4 py-2.5 text-sm transition-all flex items-center justify-between ${value === option
-                    ? `${activeStyles} font-bold`
-                    : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/10 hover:text-zinc-900 dark:hover:text-white'
+                className={`w-full text-left px-4 py-2.5 text-md transition-all flex items-center justify-between ${value === option
+                  ? `${activeStyles} font-bold`
+                  : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/10 hover:text-zinc-900 dark:hover:text-white'
                   }`}
               >
                 {option}

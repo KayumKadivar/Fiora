@@ -8,39 +8,48 @@ import UserLayout from './layouts/UserLayout';
 import AdminLayout from './layouts/AdminLayout';
 
 // User Pages
+import UserDashboard from './pages/user/UserDashboard';
 import UserDailyTask from './pages/user/UserDailyTask';
 import UserSearch from './pages/user/UserSearch';
 import UserSettings from './pages/user/UserSettings';
 
 // Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminWorkLogs from './pages/admin/AdminWorkLogs';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminSettings from './pages/admin/AdminSettings';
 
+import { Toaster } from 'react-hot-toast';
+
 const App = () => {
   return (
-    <Router>
-      <Routes>
+    <>
+      <Toaster position="top-right" reverseOrder={false} />
+      <Router>
+        <Routes>
         <Route path="/" element={<UserLogin />} />
         <Route path="/admin" element={<AdminLogin />} />
 
         {/* User Portal with Nested Routing */}
         <Route path="/dashboard" element={<UserLayout />}>
-          <Route index element={<UserDailyTask />} />
+          <Route index element={<UserDashboard />} />
+          <Route path="task" element={<UserDailyTask />} />
           <Route path="search" element={<UserSearch />} />
           <Route path="settings" element={<UserSettings />} />
         </Route>
 
         {/* Admin Portal with Nested Routing */}
         <Route path="/admin/dashboard" element={<AdminLayout />}>
-          <Route index element={<AdminWorkLogs />} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="logs" element={<AdminWorkLogs />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </Router>
+      </Router>
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ClipboardCheck, Search, Settings } from 'lucide-react';
+import { ClipboardCheck, Search, Settings, TrendingUp } from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
 
 const UserLayout = () => {
@@ -9,10 +9,16 @@ const UserLayout = () => {
 
   const navItems = [
     { 
-      icon: ClipboardCheck, 
-      label: "Daily Task", 
+      icon: TrendingUp, 
+      label: "Dashboard", 
       active: location.pathname === '/dashboard', 
       onClick: () => navigate('/dashboard') 
+    },
+    { 
+      icon: ClipboardCheck, 
+      label: "Daily Task", 
+      active: location.pathname === '/dashboard/task', 
+      onClick: () => navigate('/dashboard/task') 
     },
     { 
       icon: Search, 

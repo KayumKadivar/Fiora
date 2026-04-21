@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Users, ClipboardList, Settings } from 'lucide-react';
+import { Users, ClipboardList, Settings, TrendingUp } from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
 
 const AdminLayout = () => {
@@ -9,10 +9,16 @@ const AdminLayout = () => {
 
   const navItems = [
     { 
-      icon: ClipboardList, 
-      label: "Work Logs", 
+      icon: TrendingUp, 
+      label: "Dashboard", 
       active: location.pathname === '/admin/dashboard', 
       onClick: () => navigate('/admin/dashboard') 
+    },
+    { 
+      icon: ClipboardList, 
+      label: "Work Logs", 
+      active: location.pathname === '/admin/dashboard/logs', 
+      onClick: () => navigate('/admin/dashboard/logs') 
     },
     { 
       icon: Users, 
