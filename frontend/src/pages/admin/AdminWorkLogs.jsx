@@ -10,11 +10,16 @@ import {
   Filter, 
   Calendar,
   X,
-  UserCheck
+  UserCheck,
+  FileSpreadsheet,
+  FileText
 } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import CustomDropdown from '../../components/CustomDropdown';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const AdminWorkLogs = () => {
   const [workLogs, setWorkLogs] = useState([]);
@@ -80,6 +85,51 @@ const AdminWorkLogs = () => {
     setSearchTerm('');
     setStatusFilter('All');
     setSelectedDate(null);
+  };
+
+  const handleExportExcel = () => {
+    const dataToExport = filteredLogs.map(log => ({
+      'Agent Name': log.userName,
+      'Contact Name': log.contactName,
+      'Contact Number': log.contactNumber,
+      'Status': log.status,
+      'Next Follow-up': log.nextFollowUpDate ? new Date(log.nextFollowUpDate).toLocaleDateString() : 'N/A',
+      'Remarks': log.remarks || 'N/A',
+      'Submitted At': new Date(log.createdAt).toLocaleString()
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Work Logs");
+    XLSX.writeFile(workbook, `Fiora_WorkLogs_${new Date().toLocaleDateString()}.xlsx`);
+    toast.success('Excel report downloaded!');
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Fiora Work Logs Report", 14, 15);
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
+
+    const tableColumn = ["Agent", "Contact", "Status", "Follow-up", "Date"];
+    const tableRows = filteredLogs.map(log => [
+      log.userName,
+      log.contactName,
+      log.status,
+      log.nextFollowUpDate ? new Date(log.nextFollowUpDate).toLocaleDateString() : 'N/A',
+      new Date(log.createdAt).toLocaleDateString()
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 30,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [79, 70, 229] }
+    });
+
+    doc.save(`Fiora_WorkLogs_${new Date().toLocaleDateString()}.pdf`);
+    toast.success('PDF report downloaded!');
   };
 
   const stats = {
@@ -160,13 +210,33 @@ const AdminWorkLogs = () => {
           </div>
 
           {/* Clear Button */}
-          <button 
-            onClick={clearFilters}
-            className="px-6 py-4 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-950 dark:text-white font-black text-xl rounded-md transition-all flex items-center justify-center space-x-2 border border-zinc-200 dark:border-white/10 uppercase tracking-widest"
-          >
-            <X className="w-5 h-5" />
-            <span>Clear</span>
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button 
+              onClick={clearFilters}
+              className="px-6 py-4 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-950 dark:text-white font-black text-xl rounded-md transition-all flex items-center justify-center space-x-2 border border-zinc-200 dark:border-white/10 uppercase tracking-widest"
+              title="Clear Filters"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <button 
+              onClick={handleExportExcel}
+              className="px-6 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xl rounded-md transition-all flex items-center justify-center space-x-2 shadow-lg shadow-emerald-500/20 uppercase tracking-widest"
+              title="Download Excel"
+            >
+              <FileSpreadsheet className="w-6 h-6" />
+              <span>XLS</span>
+            </button>
+
+            <button 
+              onClick={handleExportPDF}
+              className="px-6 py-4 bg-rose-600 hover:bg-rose-500 text-white font-black text-xl rounded-md transition-all flex items-center justify-center space-x-2 shadow-lg shadow-rose-500/20 uppercase tracking-widest"
+              title="Download PDF"
+            >
+              <FileText className="w-6 h-6" />
+              <span>PDF</span>
+            </button>
+          </div>
         </div>
       </div>
 

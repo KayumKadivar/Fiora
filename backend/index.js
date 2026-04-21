@@ -12,15 +12,30 @@ app.use(express.json());
 // Database connection
 const uri = process.env.MONGO_URI;
 
-if (!uri) {
-  console.error('MONGO_URI is not defined in environment variables!');
-}
+// Connection helper
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected) return;
+  try {
+    if (!uri) throw new Error('MONGO_URI is missing');
+    const db = await mongoose.connect(uri);
+    isConnected = db.connections[0].readyState === 1;
+    console.log('MongoDB Connected');
+  } catch (err) {
+    console.error('DB Connection Error:', err);
+    throw err;
+  }
+};
 
-mongoose.connect(uri || 'mongodb://localhost:27017/fiora', {
-  serverSelectionTimeoutMS: 5000, // Fail fast if can't connect
-})
-  .then(() => console.log('Successfully connected to MongoDB'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+// Middleware to ensure DB is connected before every request
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ message: 'Database connection failed', error: err.message });
+  }
+});
 
 // Basic route
 app.get('/api/health', (req, res) => {

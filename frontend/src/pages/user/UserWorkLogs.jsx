@@ -11,10 +11,15 @@ import {
   Phone,
   ArrowRight,
   Loader2,
-  CalendarDays
+  CalendarDays,
+  FileSpreadsheet,
+  FileText
 } from 'lucide-react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import toast from 'react-hot-toast';
 
 const UserWorkLogs = () => {
@@ -68,6 +73,50 @@ const UserWorkLogs = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleExportExcel = () => {
+    const dataToExport = workLogs.map(log => ({
+      'Contact Name': log.contactName,
+      'Contact Number': log.contactNumber,
+      'Status': log.status,
+      'Next Follow-up': log.nextFollowUpDate ? new Date(log.nextFollowUpDate).toLocaleDateString() : 'N/A',
+      'Remarks': log.remarks || 'N/A',
+      'Submitted At': new Date(log.createdAt).toLocaleString()
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "My Work Logs");
+    XLSX.writeFile(workbook, `My_WorkLogs_${new Date().toLocaleDateString()}.xlsx`);
+    toast.success('Excel report downloaded!');
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text(`Work Logs Report - ${user.name}`, 14, 15);
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
+
+    const tableColumn = ["Contact", "Number", "Status", "Follow-up", "Date"];
+    const tableRows = workLogs.map(log => [
+      log.contactName,
+      log.contactNumber,
+      log.status,
+      log.nextFollowUpDate ? new Date(log.nextFollowUpDate).toLocaleDateString() : 'N/A',
+      new Date(log.createdAt).toLocaleDateString()
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 30,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [59, 130, 246] }
+    });
+
+    doc.save(`My_WorkLogs_${new Date().toLocaleDateString()}.pdf`);
+    toast.success('PDF report downloaded!');
   };
 
   const statusColors = {
@@ -132,13 +181,21 @@ const UserWorkLogs = () => {
             </div>
           </div>
 
-          <button
-            onClick={() => { setSelectedDate(null); setStatusFilter('All'); }}
-            className="flex items-center justify-center space-x-2 px-6 py-3 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-900 dark:text-white rounded-md transition-all font-black text-lg"
-          >
-            <Filter className="w-5 h-5" />
-            <span>Reset Filters</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={handleExportExcel} className="p-3 text-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-md transition-colors" title="Export to Excel">
+              <FileSpreadsheet className="w-6 h-6" />
+            </button>
+            <button onClick={handleExportPDF} className="p-3 text-rose-500 bg-rose-500/10 hover:bg-rose-500/20 rounded-md transition-colors" title="Export to PDF">
+              <FileText className="w-6 h-6" />
+            </button>
+            <button
+              onClick={() => { setSelectedDate(null); setStatusFilter('All'); }}
+              className="flex items-center justify-center space-x-2 px-6 py-3 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-zinc-900 dark:text-white rounded-md transition-all font-black text-lg"
+            >
+              <Filter className="w-5 h-5" />
+              <span>Reset</span>
+            </button>
+          </div>
         </div>
       </div>
 
