@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // Database connection
-const uri = process.env.MONGO_URI;
+const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
 
 // Connection helper
 let isConnected = false;
