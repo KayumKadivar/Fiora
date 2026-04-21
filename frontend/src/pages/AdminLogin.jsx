@@ -9,6 +9,7 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (credentials) => {
+    console.log('Admin login attempt:', credentials.email);
     const loginToast = toast.loading('Authenticating Admin...');
     try {
       const response = await fetch('/api/users/login', {

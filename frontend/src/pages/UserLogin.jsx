@@ -9,6 +9,7 @@ const UserLogin = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (credentials) => {
+    console.log('Login attempt started:', credentials.email);
     const loginToast = toast.loading('Signing in...');
     try {
       const response = await fetch('/api/users/login', {
